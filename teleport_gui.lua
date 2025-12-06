@@ -1,36 +1,61 @@
--- Teleport GUI dengan Dropdown dan Fitur Float
+-- Teleport GUI dengan Dropdown dan Drag Manual (Kompatibel Delta Executor)
+if not game:IsLoaded() then
+    game.Loaded:Wait()
+end
+
 local player = game.Players.LocalPlayer
 local playerGui = player:WaitForChild("PlayerGui")
+local UIS = game:GetService("UserInputService")
 
--- Buat GUI utama
-local screenGui = Instance.new("ScreenGui")
+-- GUI
+local screenGui = Instance.new("ScreenGui", playerGui)
 screenGui.Name = "TeleportDropdownGui"
 screenGui.ResetOnSpawn = false
-screenGui.Parent = playerGui
 
--- Frame utama (draggable)
-local frame = Instance.new("Frame")
+local frame = Instance.new("Frame", screenGui)
 frame.Size = UDim2.new(0, 220, 0, 120)
 frame.Position = UDim2.new(0.5, -110, 0.75, 0)
 frame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
 frame.BorderSizePixel = 0
 frame.Active = true
-frame.Draggable = true
-frame.Parent = screenGui
 
--- Label judul
-local title = Instance.new("TextLabel")
+-- Drag manual
+local dragging, dragInput, dragStart, startPos
+frame.InputBegan:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseButton1 then
+        dragging = true
+        dragStart = input.Position
+        startPos = frame.Position
+        input.Changed:Connect(function()
+            if input.UserInputState == Enum.UserInputState.End then
+                dragging = false
+            end
+        end)
+    end
+end)
+frame.InputChanged:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseMovement then
+        dragInput = input
+    end
+end)
+UIS.InputChanged:Connect(function(input)
+    if input == dragInput and dragging then
+        local delta = input.Position - dragStart
+        frame.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
+    end
+end)
+
+-- Judul
+local title = Instance.new("TextLabel", frame)
 title.Size = UDim2.new(1, 0, 0, 30)
-title.Position = UDim2.new(0, 0, 0, 0)
 title.Text = "Pilih Lokasi Teleport"
-title.TextColor3 = Color3.new(1, 1, 1)
 title.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
+title.TextColor3 = Color3.new(1, 1, 1)
 title.Font = Enum.Font.SourceSansBold
 title.TextSize = 18
-title.Parent = frame
 
 -- Tombol dropdown
-local dropdown = Instance.new("TextButton")
+local dropdown = Instance.new("TextButton", frame)
 dropdown.Size = UDim2.new(1, -20, 0, 30)
 dropdown.Position = UDim2.new(0, 10, 0, 40)
 dropdown.Text = "Pilih Lokasi"
@@ -38,51 +63,42 @@ dropdown.BackgroundColor3 = Color3.fromRGB(0, 170, 255)
 dropdown.TextColor3 = Color3.new(1, 1, 1)
 dropdown.Font = Enum.Font.SourceSans
 dropdown.TextSize = 16
-dropdown.Parent = frame
 
--- Daftar dropdown
-local dropdownList = Instance.new("Frame")
+-- Daftar lokasi
+local dropdownList = Instance.new("Frame", frame)
 dropdownList.Size = UDim2.new(1, -20, 0, 60)
 dropdownList.Position = UDim2.new(0, 10, 0, 70)
 dropdownList.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
 dropdownList.Visible = false
-dropdownList.Parent = frame
 
--- Lokasi-lokasi teleportasi
 local locations = {
     ["Castaway Cliff"] = Vector3.new(690, 135, -1693),
     ["Carrot Garden"] = Vector3.new(2672, 131, -652)
 }
 
--- Fungsi teleportasi
-local function teleportTo(position)
-    if player and player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
-        player.Character.HumanoidRootPart.CFrame = CFrame.new(position)
-    else
-        warn("Karakter tidak ditemukan atau belum siap.")
+local function teleportTo(pos)
+    local char = player.Character
+    if char and char:FindFirstChild("HumanoidRootPart") then
+        char.HumanoidRootPart.CFrame = CFrame.new(pos)
     end
 end
 
--- Tambahkan tombol untuk setiap lokasi
 for name, pos in pairs(locations) do
-    local option = Instance.new("TextButton")
-    option.Size = UDim2.new(1, 0, 0, 30)
-    option.Position = UDim2.new(0, 0, 0, (#dropdownList:GetChildren() - 1) * 30)
-    option.Text = name
-    option.BackgroundColor3 = Color3.fromRGB(80, 80, 80)
-    option.TextColor3 = Color3.new(1, 1, 1)
-    option.Font = Enum.Font.SourceSans
-    option.TextSize = 16
-    option.Parent = dropdownList
-
-    option.MouseButton1Click:Connect(function()
+    local btn = Instance.new("TextButton", dropdownList)
+    btn.Size = UDim2.new(1, 0, 0, 30)
+    btn.Position = UDim2.new(0, 0, 0, (#dropdownList:GetChildren() - 1) * 30)
+    btn.Text = name
+    btn.BackgroundColor3 = Color3.fromRGB(80, 80, 80)
+    btn.TextColor3 = Color3.new(1, 1, 1)
+    btn.Font = Enum.Font.SourceSans
+    btn.TextSize = 16
+    btn.MouseButton1Click:Connect(function()
         dropdown.Text = name
         dropdownList.Visible = false
         teleportTo(pos)
     end)
 end
 
--- Toggle dropdown
 dropdown.MouseButton1Click:Connect(function()
     dropdownList.Visible = not dropdownList.Visible
 end)
