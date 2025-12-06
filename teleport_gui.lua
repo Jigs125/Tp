@@ -1,4 +1,4 @@
--- Teleport GUI dengan Dropdown dan Drag Manual (Kompatibel Delta Executor)
+-- Teleport GUI di Kiri Layar dengan Dropdown dan Drag Manual
 if not game:IsLoaded() then
     game.Loaded:Wait()
 end
@@ -14,7 +14,7 @@ screenGui.ResetOnSpawn = false
 
 local frame = Instance.new("Frame", screenGui)
 frame.Size = UDim2.new(0, 220, 0, 120)
-frame.Position = UDim2.new(0.5, -110, 0.75, 0)
+frame.Position = UDim2.new(0, 20, 0.4, 0) -- Posisi kiri layar
 frame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
 frame.BorderSizePixel = 0
 frame.Active = true
