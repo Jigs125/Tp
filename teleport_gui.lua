@@ -85,7 +85,7 @@ dropdownList.Visible = false
 
 local locations = {
     ["Castaway Cliff"] = Vector3.new(690, 135, -1693),
-    ["Lumenesent Cavern"] = Vector3.new(-1011, 335.5, -4083),
+    ["Lumenesent Cavern"] = Vector3.new(-1011, -336.5, -4083),
     ["Carrot Garden"] = Vector3.new(2672, 131, -652)
 }
 
