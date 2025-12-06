@@ -1,4 +1,4 @@
--- Teleport GUI di Kiri Layar dengan Dropdown dan Drag Manual
+-- Teleport GUI di Kiri Layar dengan Drag Manual (Kompatibel Android & PC)
 if not game:IsLoaded() then
     game.Loaded:Wait()
 end
@@ -14,18 +14,29 @@ screenGui.ResetOnSpawn = false
 
 local frame = Instance.new("Frame", screenGui)
 frame.Size = UDim2.new(0, 220, 0, 120)
-frame.Position = UDim2.new(0, 20, 0.4, 0) -- Posisi kiri layar
+frame.Position = UDim2.new(0, 20, 0.4, 0) -- Kiri tengah layar
 frame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
 frame.BorderSizePixel = 0
 frame.Active = true
 
--- Drag manual
+-- Drag manual (kompatibel Android & PC)
 local dragging, dragInput, dragStart, startPos
+local function updateInput(input)
+    local delta = input.Position - dragStart
+    frame.Position = UDim2.new(
+        startPos.X.Scale,
+        startPos.X.Offset + delta.X,
+        startPos.Y.Scale,
+        startPos.Y.Offset + delta.Y
+    )
+end
+
 frame.InputBegan:Connect(function(input)
-    if input.UserInputType == Enum.UserInputType.MouseButton1 then
+    if input.UserInputType == Enum.UserInputType.Touch or input.UserInputType == Enum.UserInputType.MouseButton1 then
         dragging = true
         dragStart = input.Position
         startPos = frame.Position
+
         input.Changed:Connect(function()
             if input.UserInputState == Enum.UserInputState.End then
                 dragging = false
@@ -33,15 +44,16 @@ frame.InputBegan:Connect(function(input)
         end)
     end
 end)
+
 frame.InputChanged:Connect(function(input)
-    if input.UserInputType == Enum.UserInputType.MouseMovement then
+    if input.UserInputType == Enum.UserInputType.Touch or input.UserInputType == Enum.UserInputType.MouseMovement then
         dragInput = input
     end
 end)
+
 UIS.InputChanged:Connect(function(input)
     if input == dragInput and dragging then
-        local delta = input.Position - dragStart
-        frame.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
+        updateInput(input)
     end
 end)
 
