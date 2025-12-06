@@ -1,4 +1,4 @@
--- GUI Teleport dengan Dropdown dan Fitur Float (Draggable)
+-- Teleport GUI dengan Dropdown dan Fitur Float
 local player = game.Players.LocalPlayer
 local playerGui = player:WaitForChild("PlayerGui")
 
@@ -8,14 +8,14 @@ screenGui.Name = "TeleportDropdownGui"
 screenGui.ResetOnSpawn = false
 screenGui.Parent = playerGui
 
--- Frame utama
+-- Frame utama (draggable)
 local frame = Instance.new("Frame")
 frame.Size = UDim2.new(0, 220, 0, 120)
 frame.Position = UDim2.new(0.5, -110, 0.75, 0)
 frame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
 frame.BorderSizePixel = 0
 frame.Active = true
-frame.Draggable = true -- Ini yang membuat frame bisa digeser
+frame.Draggable = true
 frame.Parent = screenGui
 
 -- Label judul
@@ -29,7 +29,7 @@ title.Font = Enum.Font.SourceSansBold
 title.TextSize = 18
 title.Parent = frame
 
--- Dropdown Button
+-- Tombol dropdown
 local dropdown = Instance.new("TextButton")
 dropdown.Size = UDim2.new(1, -20, 0, 30)
 dropdown.Position = UDim2.new(0, 10, 0, 40)
@@ -40,7 +40,7 @@ dropdown.Font = Enum.Font.SourceSans
 dropdown.TextSize = 16
 dropdown.Parent = frame
 
--- Dropdown List
+-- Daftar dropdown
 local dropdownList = Instance.new("Frame")
 dropdownList.Size = UDim2.new(1, -20, 0, 60)
 dropdownList.Position = UDim2.new(0, 10, 0, 70)
@@ -48,7 +48,7 @@ dropdownList.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
 dropdownList.Visible = false
 dropdownList.Parent = frame
 
--- Lokasi-lokasi
+-- Lokasi-lokasi teleportasi
 local locations = {
     ["Castaway Cliff"] = Vector3.new(690, 135, -1693),
     ["Carrot Garden"] = Vector3.new(2672, 131, -652)
